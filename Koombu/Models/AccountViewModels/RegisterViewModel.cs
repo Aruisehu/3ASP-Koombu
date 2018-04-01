@@ -23,5 +23,21 @@ namespace Koombu.Models.AccountViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Department")]
+        public int Department { get; set; }
+
+        [Required]
+        [Display(Name = "Title")]
+        public string Title { get; set; }
     }
 }
