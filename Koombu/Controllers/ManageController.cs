@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Koombu.Models;
 using Koombu.Models.ManageViewModels;
 using Koombu.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Koombu.Controllers
 {
@@ -58,8 +59,11 @@ namespace Koombu.Controllers
             var model = new IndexViewModel
             {
                 Username = user.UserName,
+                LastName = user.LastName,
+                FirstName = user.FirstName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
+                BirthDate = user.BirthDate,
                 IsEmailConfirmed = user.EmailConfirmed,
                 StatusMessage = StatusMessage
             };
@@ -101,6 +105,11 @@ namespace Koombu.Controllers
                     throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
                 }
             }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.BirthDate = model.BirthDate;
+            await _userManager.UpdateAsync(user); 
 
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));
