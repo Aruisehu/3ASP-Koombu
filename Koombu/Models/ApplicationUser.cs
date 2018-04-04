@@ -15,10 +15,10 @@ namespace Koombu.Models
         public string Title { get; set; }
         public DateTime BirthDate { get; set; }
 
-        public ICollection<UserGroup> UserGroups { get; }
-        public ICollection<Group> OwnerGroups { get; }
-        public ICollection<Post> Posts { get; }
-        public ICollection<Comment> Comments { get; }
+        public ICollection<UserGroup> UserGroups { get; } = new List<UserGroup>();
+        public ICollection<Group> OwnerGroups { get; } = new List<Group>();
+        public ICollection<Post> Posts { get; } = new List<Post>();
+        public ICollection<Comment> Comments { get; } = new List<Comment>();
 
     }
 }

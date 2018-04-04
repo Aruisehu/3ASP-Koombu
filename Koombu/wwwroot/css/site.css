@@ -70,6 +70,7 @@ body > footer {
 
 .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
     background: #581;
+    background: linear-gradient(90deg, #581, #6B0);
 }
 
 .form-control:focus {
@@ -82,4 +83,8 @@ body > footer {
 ::selection {
     background-color: rgba(51, 102, 0, .75) !important;
     color: #FFF !important;
+}
+
+.navbar-toggle .icon-bar {
+    background: #581;
 }

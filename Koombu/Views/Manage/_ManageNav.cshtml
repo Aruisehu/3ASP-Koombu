@@ -5,7 +5,10 @@
 }
 
 <ul class="nav nav-pills nav-stacked">
+    <h4>Menu</h4>
+    <hr />
     <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-action="Index">Profile</a></li>
+    <li class="@ManageNavPages.GroupsNavClass(ViewContext)"><a asp-action="Groups">My Groups</a></li>
     <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)"><a asp-action="ChangePassword">Password</a></li>
     @if (hasExternalLogins)
     {
@@ -13,4 +16,3 @@
     }
     <li class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"><a asp-action="TwoFactorAuthentication">Two-factor authentication</a></li>
 </ul>
-

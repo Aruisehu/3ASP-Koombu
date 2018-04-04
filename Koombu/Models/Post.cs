@@ -15,7 +15,7 @@ namespace Koombu.Models
         public string GroupId { get; set; } 
         public Group Group { get; set; } 
 
-        public ICollection<Comment> Comments { get; }
-        public ICollection<Attachment> Attachments { get; }
+        public ICollection<Comment> Comments { get; } = new List<Comment>();
+        public ICollection<Attachment> Attachments { get; } = new List<Attachment>();
     }
 }

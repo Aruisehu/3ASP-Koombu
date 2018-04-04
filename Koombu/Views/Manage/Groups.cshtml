@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Koombu.Models.Group>
+
+@{
+    ViewData["Title"] = "My Groups";
+    ViewData.AddActivePage(ManageNavPages.Groups);
+}
+
+<h4>@ViewData["Title"]</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            <tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        <ul class="list-unstyled">
+                            <li><a asp-controller="Groups" asp-action="Edit" asp-route-id="@item.Id">Edit</a></li>
+                            <li><a asp-controller="Groups" asp-action="Details" asp-route-id="@item.Id">Details</a></li>
+                            <li><a asp-controller="Groups" asp-action="Delete" asp-route-id="@item.Id">Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

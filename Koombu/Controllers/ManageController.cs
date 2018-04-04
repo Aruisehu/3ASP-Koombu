@@ -14,6 +14,7 @@ using Koombu.Models;
 using Koombu.Models.ManageViewModels;
 using Koombu.Services;
 using Microsoft.EntityFrameworkCore;
+using Koombu.Data;
 
 namespace Koombu.Controllers
 {
@@ -26,6 +27,7 @@ namespace Koombu.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly UrlEncoder _urlEncoder;
+        private readonly ApplicationDbContext _context;
 
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
@@ -35,13 +37,15 @@ namespace Koombu.Controllers
           SignInManager<ApplicationUser> signInManager,
           IEmailSender emailSender,
           ILogger<ManageController> logger,
-          UrlEncoder urlEncoder)
+          UrlEncoder urlEncoder,
+          ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            _context = context;
         }
 
         [TempData]
@@ -109,10 +113,22 @@ namespace Koombu.Controllers
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.BirthDate = model.BirthDate;
-            await _userManager.UpdateAsync(user); 
+            await _userManager.UpdateAsync(user);
 
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Groups()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var applicationDbContext = _context.Groups.Include(g => g.Owner).Where(g => g.Owner == user);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         [HttpPost]
