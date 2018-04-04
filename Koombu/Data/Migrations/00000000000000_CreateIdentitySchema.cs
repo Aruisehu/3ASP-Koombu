@@ -60,6 +60,7 @@ namespace Koombu.Data.Migrations
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     FirstName = table.Column<string>(maxLength: 256, nullable: false),
                     LastName = table.Column<string>(maxLength: 256, nullable: false),
+                    BirthDate = table.Column<DateTime>(nullable: false),
                     Department = table.Column<int>(nullable: true),
                     Title = table.Column<string>(maxLength: 256, nullable: false),
                 },

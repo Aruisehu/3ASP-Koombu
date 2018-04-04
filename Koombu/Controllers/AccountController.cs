@@ -227,7 +227,8 @@ namespace Koombu.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Department = model.Department,
-                    Title = model.Title
+                    Title = model.Title,
+                    BirthDate =  model.BirthDate
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

@@ -39,5 +39,9 @@ namespace Koombu.Models.AccountViewModels
         [Required]
         [Display(Name = "Title")]
         public string Title { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        public DateTime BirthDate { get; set; }
     }
 }

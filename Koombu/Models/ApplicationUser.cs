@@ -13,6 +13,12 @@ namespace Koombu.Models
         public string LastName { get; set; }
         public int Department { get; set; }
         public string Title { get; set; }
+        public DateTime BirthDate { get; set; }
+
+        public ICollection<UserGroup> UserGroups { get; }
+        public ICollection<Group> OwnerGroups { get; }
+        public ICollection<Post> Posts { get; }
+        public ICollection<Comment> Comments { get; }
 
     }
 }
