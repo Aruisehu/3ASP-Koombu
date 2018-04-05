@@ -1,4 +1,4 @@
-﻿@model Koombu.Models.Group
+﻿@model Koombu.Models.GroupViewModels.DetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -10,20 +10,34 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.group.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.group.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Owner)
+            @Html.DisplayNameFor(model => model.group.Owner)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Owner.FirstName) @Html.DisplayFor(model => model.Owner.LastName)
+            @Html.DisplayFor(model => model.group.Owner.FirstName) @Html.DisplayFor(model => model.group.Owner.LastName)
+        </dd>
+        <dt>
+            Utilisateurs
+        </dt>
+        <dd>
+            <ul class="list-unstyled">
+                @foreach (var item in Model.userGroups)
+                {
+                    <li>@Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)</li>
+                }
+            </ul>
         </dd>
     </dl>
+    <hr />
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.group.Id">Edit</a> |
+    <a asp-action="AddUser" asp-route-id="@Model.group.Id">Add user</a> |
+    <a asp-action="RemoveUser" asp-route-id="@Model.group.Id">Remove user</a> |
     <a asp-action="Index">Back to List</a>
 </div>

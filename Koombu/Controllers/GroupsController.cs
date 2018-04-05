@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Koombu.Data;
 using Koombu.Models;
 using Microsoft.AspNetCore.Authorization;
+using Koombu.Models.GroupViewModels;
 
 namespace Koombu.Controllers
 {
@@ -41,12 +42,22 @@ namespace Koombu.Controllers
             var @group = await _context.Groups
                 .Include(g => g.Owner)
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (@group == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            var @userGroups = await _context.UserGroups
+                .Include(u => u.User)
+                .Where(m => m.GroupId == id)
+                .ToListAsync();
+
+            DetailsViewModel model = new DetailsViewModel();
+            model.group = @group;
+            model.userGroups = @userGroups;
+
+            return View(model);
         }
 
         // GET: Groups/Create
@@ -72,9 +83,149 @@ namespace Koombu.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["OwnerId"] = user.Id;
+            
             return View(@group);
+        }
+
+        // GET: Groups/NotOwner
+        public async Task<IActionResult> NotOwner()
+        {
+            return View();
+        }
+
+        // GET: Groups/AddUser
+        public async Task<IActionResult> AddUser(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @group = await _context.Groups
+                .Include(g => g.Owner)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (@group == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
+            }
+
+            return View();
+        }
+
+        // POST: Groups/AddUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddUser(string id, string userEmail)
+        {
+            if (id == null || userEmail == null)
+            {
+                return NotFound();
+            }
+
+            var @addedUser = await _context.Users.SingleOrDefaultAsync(u => u.Email == userEmail);
+
+            var @group = await _context.Groups
+                .Include(g => g.Owner)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (@group == null || @addedUser == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
+            }
+
+            UserGroup join = new UserGroup();
+            join.GroupId = @group.Id;
+            join.UserId = @addedUser.Id;
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(join);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", new { id = @group.Id });
+            }
+
+            return View(@group);
+        }
+
+        public async Task<IActionResult> RemoveUser(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @group = await _context.Groups
+                .Include(g => g.Owner)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (@group == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
+            }
+
+            return View(@group);
+        }
+
+        // POST: Groups/RemoveUser
+        [HttpPost, ActionName("RemoveUser")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveUser(string id, string userEmail)
+        {
+            if (id == null || userEmail == null)
+            {
+                return NotFound();
+            }
+
+            var @addedUser = await _context.Users.SingleOrDefaultAsync(u => u.Email == userEmail);
+
+            var @group = await _context.Groups
+                .Include(g => g.Owner)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (@group == null || @addedUser == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
+            }
+
+            UserGroup join = await _context.UserGroups.Where(ug => ug.UserId == @addedUser.Id && ug.GroupId == @group.Id).FirstOrDefaultAsync(); 
+
+            if (join == null)
+            {
+                return NotFound();
+            }
+
+            _context.UserGroups.Remove(join);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = @group.Id });
         }
 
         // GET: Groups/Edit/5
@@ -90,7 +241,14 @@ namespace Koombu.Controllers
             {
                 return NotFound();
             }
-            ViewData["OwnerId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", @group.OwnerId);
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
+            }
+
             return View(@group);
         }
 
@@ -99,11 +257,18 @@ namespace Koombu.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,OwnerId")] Group @group)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name")] Group @group)
         {
             if (id != @group.Id)
             {
                 return NotFound();
+            }
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
             }
 
             if (ModelState.IsValid)
@@ -126,7 +291,7 @@ namespace Koombu.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", @group.OwnerId);
+
             return View(@group);
         }
 
@@ -146,6 +311,13 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
+            }
+
             return View(@group);
         }
 
@@ -155,6 +327,14 @@ namespace Koombu.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var @group = await _context.Groups.SingleOrDefaultAsync(m => m.Id == id);
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            if (@group.OwnerId != user.Id)
+            {
+                return RedirectToAction("NotOwner");
+            }
+
             _context.Groups.Remove(@group);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
