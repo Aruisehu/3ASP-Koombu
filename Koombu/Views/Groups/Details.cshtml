@@ -10,23 +10,23 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.group.Name)
+            @Html.DisplayNameFor(model => model.Group.Name)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.group.Name)
+            @Html.DisplayFor(model => model.Group.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.group.Owner)
+            @Html.DisplayNameFor(model => model.Group.Owner)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.group.Owner.FirstName) @Html.DisplayFor(model => model.group.Owner.LastName)
+            @Html.DisplayFor(model => model.Group.Owner.FirstName) @Html.DisplayFor(model => model.Group.Owner.LastName)
         </dd>
         <dt>
-            Utilisateurs
+            Users
         </dt>
         <dd>
             <ul class="list-unstyled">
-                @foreach (var item in Model.userGroups)
+                @foreach (var item in Model.UserGroups)
                 {
                     <li>@Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)</li>
                 }
@@ -36,8 +36,13 @@
     <hr />
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.group.Id">Edit</a> |
-    <a asp-action="AddUser" asp-route-id="@Model.group.Id">Add user</a> |
-    <a asp-action="RemoveUser" asp-route-id="@Model.group.Id">Remove user</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Group.Id">Edit</a> |
+    <a asp-action="AddUser" asp-route-id="@Model.Group.Id">Add user</a> |
+    <a asp-action="RemoveUser" asp-route-id="@Model.Group.Id">Remove user</a> |
+    @if (Model.UserGroups.Where(ug => ug.UserId == Model.User?.Id).Any())
+    {
+        <a asp-action="RemoveSelf" asp-route-id="@Model.Group.Id">Remove self</a>
+        <span>|</span>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

@@ -53,9 +53,12 @@ namespace Koombu.Controllers
                 .Where(m => m.GroupId == id)
                 .ToListAsync();
 
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
             DetailsViewModel model = new DetailsViewModel();
-            model.group = @group;
-            model.userGroups = @userGroups;
+            model.Group = @group;
+            model.UserGroups = @userGroups;
+            model.User = user;
 
             return View(model);
         }
@@ -216,7 +219,68 @@ namespace Koombu.Controllers
                 return RedirectToAction("NotOwner");
             }
 
-            UserGroup join = await _context.UserGroups.Where(ug => ug.UserId == @addedUser.Id && ug.GroupId == @group.Id).FirstOrDefaultAsync(); 
+            UserGroup join = await _context.UserGroups.Where(ug => ug.UserId == @addedUser.Id && ug.GroupId == @group.Id).FirstOrDefaultAsync();
+
+            if (join == null)
+            {
+                return NotFound();
+            }
+
+            _context.UserGroups.Remove(join);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = @group.Id });
+        }
+
+        public async Task<IActionResult> RemoveSelf(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @group = await _context.Groups
+                .Include(g => g.Owner)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (@group == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            UserGroup join = await _context.UserGroups.Where(ug => ug.UserId == user.Id && ug.GroupId == @group.Id).FirstOrDefaultAsync();
+
+            if (join == null)
+            {
+                return NotFound();
+            }
+
+            return View(@group);
+        }
+
+        // POST: Groups/RemoveSelf
+        [HttpPost, ActionName("RemoveSelf")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveSelfPost(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @group = await _context.Groups
+                .Include(g => g.Owner)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (@group == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            UserGroup join = await _context.UserGroups.Where(ug => ug.UserId == user.Id && ug.GroupId == @group.Id).FirstOrDefaultAsync();
 
             if (join == null)
             {

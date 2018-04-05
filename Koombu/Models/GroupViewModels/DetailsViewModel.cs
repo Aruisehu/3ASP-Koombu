@@ -8,8 +8,10 @@ namespace Koombu.Models.GroupViewModels
 {
     public class DetailsViewModel
     {
-        public Group group { get; set; }
+        public Group Group { get; set; }
 
-        public List<UserGroup> userGroups { get; set; }
+        public ApplicationUser User { get; set; }
+
+        public List<UserGroup> UserGroups { get; set; }
     }
 }
