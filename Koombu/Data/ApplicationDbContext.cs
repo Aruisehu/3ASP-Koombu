@@ -56,6 +56,11 @@ namespace Koombu.Data
             builder.Entity<Attachment>().ToTable("Attachments").HasKey(a => a.Id);
             builder.Entity<Attachment>().HasOne(a => a.Post).WithMany(p => p.Attachments);
 
+            builder.Entity<UserFollow>().ToTable("UserFollows").HasKey(uf => new { uf.FollowingId, uf.FollowerId });
+            builder.Entity<UserFollow>().HasOne(uf => uf.Following).WithMany(u => u.Followings);
+            builder.Entity<UserFollow>().HasOne(uf => uf.Follower).WithMany(u => u.Followers);
+            
+
 
 
         }

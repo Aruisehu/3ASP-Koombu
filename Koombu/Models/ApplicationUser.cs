@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,10 @@ namespace Koombu.Models
         public ICollection<Group> OwnerGroups { get; } = new List<Group>();
         public ICollection<Post> Posts { get; } = new List<Post>();
         public ICollection<Comment> Comments { get; } = new List<Comment>();
+        [InverseProperty("Following")]
+        public ICollection<UserFollow> Followings { get; } = new List<UserFollow>();
+        [InverseProperty("Follower")]
+        public ICollection<UserFollow> Followers { get; } = new List<UserFollow>();
 
     }
 }
