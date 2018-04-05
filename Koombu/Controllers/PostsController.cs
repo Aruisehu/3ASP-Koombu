@@ -55,7 +55,7 @@ namespace Koombu.Controllers
         public IActionResult Create()
         {
             ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
-            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Any(value => user.UserGroups.Contains(value))), "Id", "Name");
+            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Where(ug => ug.User.Equals(user)).Any()), "Id", "Name");
             return View();
         }
 
@@ -74,7 +74,7 @@ namespace Koombu.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Any(value => user.UserGroups.Contains(value))), "Id", "Name");
+            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Where(ug => ug.User.Equals(user)).Any()), "Id", "Name");
             return View(post);
         }
 
@@ -92,7 +92,7 @@ namespace Koombu.Controllers
                 return NotFound();
             }
             ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
-            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Any(value => user.UserGroups.Contains(value))), "Id", "Name");
+            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Where(ug => ug.User.Equals(user)).Any()), "Id", "Name");
             return View(post);
         }
 
@@ -129,8 +129,7 @@ namespace Koombu.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
-            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "Id", post.GroupId);
-            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Any(value => user.UserGroups.Contains(value))), "Id", "Name");
+            ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Where(ug => ug.User.Equals(user)).Any()), "Id", "Name");
             return View(post);
         }
 
