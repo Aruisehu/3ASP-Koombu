@@ -24,6 +24,7 @@ namespace Koombu.Models
         public ICollection<UserFollow> Followings { get; } = new List<UserFollow>();
         [InverseProperty("Follower")]
         public ICollection<UserFollow> Followers { get; } = new List<UserFollow>();
+        public ICollection<UserLike> UserLikes { get; } = new List<UserLike>();
 
     }
 }

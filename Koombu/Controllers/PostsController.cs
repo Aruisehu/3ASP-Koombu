@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Koombu.Data;
 using Koombu.Models;
+using Koombu.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Koombu.Controllers
 {
+    [Authorize]
     public class PostsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,12 +20,14 @@ namespace Koombu.Controllers
         public PostsController(ApplicationDbContext context)
         {
             _context = context;
+            UserHelper.Context = context;
         }
 
         // GET: Posts
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Posts.Include(p => p.Group).Include(p => p.User);
+            ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
+            var applicationDbContext = _context.Posts.Include(p => p.Group).Include(p => p.User);//.Where(p => p.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -49,7 +54,7 @@ namespace Koombu.Controllers
         // GET: Posts/Create
         public IActionResult Create()
         {
-            ApplicationUser user = _context.ApplicationUsers.Where(au => au.Email == User.Identity.Name).FirstOrDefault();
+            ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
             ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Any(value => user.UserGroups.Contains(value))), "Id", "Name");
             return View();
         }
@@ -61,7 +66,7 @@ namespace Koombu.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Content,GroupId")] Post post)
         {
-            ApplicationUser user = _context.ApplicationUsers.Where(au => au.Email == User.Identity.Name).FirstOrDefault();
+            ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
             if (ModelState.IsValid)
             {
                 post.User = user;
@@ -81,12 +86,12 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            ApplicationUser user = _context.ApplicationUsers.Where(au => au.Email == User.Identity.Name).FirstOrDefault();
             var post = await _context.Posts.SingleOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
             }
+            ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
             ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Any(value => user.UserGroups.Contains(value))), "Id", "Name");
             return View(post);
         }
@@ -123,7 +128,7 @@ namespace Koombu.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ApplicationUser user = _context.ApplicationUsers.Where(au => au.Email == User.Identity.Name).FirstOrDefault();
+            ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
             ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "Id", post.GroupId);
             ViewData["GroupId"] = new SelectList(_context.Groups.Where(g => g.UserGroups.Any(value => user.UserGroups.Contains(value))), "Id", "Name");
             return View(post);
