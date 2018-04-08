@@ -1,4 +1,4 @@
-﻿@model Koombu.Models.Post
+﻿@model Koombu.Models.PostViewModels.DetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,32 +11,67 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Content)
+            @Html.DisplayNameFor(model => model.Post.Content)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Content)
+            @Html.DisplayFor(model => model.Post.Content)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Likes)
+            @Html.DisplayNameFor(model => model.Post.Likes)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Likes)
+            @Html.DisplayFor(model => model.Post.Likes)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Group)
+            @Html.DisplayNameFor(model => model.Post.Group)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Group.Id)
+            @Html.DisplayFor(model => model.Post.Group.Id)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.User)
+            @Html.DisplayNameFor(model => model.Post.User)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.User.Id)
+            @Html.DisplayFor(model => model.Post.User.Id)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Post.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+
+<h2> Comments </h2>
+<div>
+    <form asp-action="Create" asp-controller="Comments" asp-route-postId="@Model.Post.Id">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="@Model.Comment.Content" class="control-label"></label>
+            <textarea asp-for="@Model.Comment.Content" class="form-control"></textarea>
+            <span asp-validation-for="@Model.Comment.Content" class="text-danger"></span>
+        </div>
+        <div class="hidden">
+            @Html.EditorFor(m => m.Post)
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Comment" class="btn btn-default" />
+        </div>
+    </form>
+    @foreach(Comment c in Model.Post.Comments)
+    {
+        <div>
+            <h4>@c.User.FullName</h4>
+            <div class="panel-body">
+                @c.Content
+            </div>
+            @if (c.User.Email == User.Identity.Name)
+            {
+                <form asp-action="Delete" asp-controller="Comments" asp-route-postId="@Model.Post.Id" asp-route-id="@c.Id">
+                    <div class="form-group">
+                        <input type="submit" value="Delete Comment" class="btn-link" />
+                    </div>
+                </form>
+            }
+        </div>
+    }
 </div>

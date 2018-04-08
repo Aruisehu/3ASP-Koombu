@@ -12,6 +12,7 @@ namespace Koombu.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string FullName { get { return FirstName + " " + LastName; }}
         public int Department { get; set; }
         public string Title { get; set; }
         public DateTime BirthDate { get; set; }

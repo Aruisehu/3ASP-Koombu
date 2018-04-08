@@ -9,6 +9,7 @@ using Koombu.Data;
 using Koombu.Models;
 using Koombu.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Koombu.Models.PostViewModels;
 
 namespace Koombu.Controllers
 {
@@ -39,16 +40,22 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Posts
+            Post post = await _context.Posts
                 .Include(p => p.Group)
                 .Include(p => p.User)
+                .Include(p => p.Comments)
                 .SingleOrDefaultAsync(m => m.Id == id);
+            DetailsViewModel model = new DetailsViewModel
+            {
+                Post = post,
+                Comment = new Comment()
+            };
             if (post == null)
             {
                 return NotFound();
             }
 
-            return View(post);
+            return View(model);
         }
 
         // GET: Posts/Create
