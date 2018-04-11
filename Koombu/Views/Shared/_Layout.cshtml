@@ -17,36 +17,43 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="/images/logo.png"/></a>
+    <nav class="navbar navbar-collapse navbar-fixed-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="/images/logo.png"/></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a asp-area="" asp-controller="Groups" asp-action="Index">Groups</a></li>
+                <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
+                <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+            </ul>
+            <div class="col-sm-2 col-md-2">
+                <form asp-controller="Posts" asp-action="Search" method="get" class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input id="query" type="text" name="query" class="form-control" placeholder="Search for posts" />
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Groups" asp-action="Index">Groups</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-                <ul class="nav navbar-nav">
-                    <form asp-controller="Posts" asp-action="Search" method="get" class="nav navbar-nav">
-                        <input id="query" type="text" name="query" class="navbar-form nav" placeholder="Search for posts"/>
-                        <button type="submit" class="btn glyphicon glyphicon-search"></button>
-                    </form>
-                    <form asp-controller="Users" asp-action="Search" method="get" class="nav navbar-nav">
-                        <input id="query" type="text" name="query" class="navbar-form nav" placeholder="Search for users"/>
-                        <button type="submit" class="btn glyphicon glyphicon-search"></button>
-                    </form>
-                </ul>
-                @await Html.PartialAsync("_LoginPartial")
+            <div class="col-sm-2 col-md-2">
+                <form asp-controller="Users" asp-action="Search" method="get" class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input id="query" type="text" name="query" class="form-control" placeholder="Search for users" />
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
             </div>
+            @await Html.PartialAsync("_LoginPartial")
         </div>
     </nav>
     <div class="container body-content">
