@@ -88,3 +88,12 @@ body > footer {
 .navbar-toggle .icon-bar {
     background: #581;
 }
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+form.min {
+    display: inline-block;
+}

@@ -32,6 +32,94 @@ namespace Koombu.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // POST: like
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Like(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var post = await _context.Posts
+                .Include(p => p.Group)
+                .Include(p => p.User)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
+
+            UserLike oldLike = await _context.UserLikes.Where(ul => ul.PostId == id && ul.UserId == user.Id).FirstOrDefaultAsync();
+
+            if (oldLike != null)
+            {
+                return NotFound();
+            }
+
+            UserLike like = new UserLike();
+            like.UserId = user.Id;
+            like.PostId = post.Id;
+
+            post.Likes++;
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(post);
+                _context.Add(like);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", new { id = post.Id });
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: unlike
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unlike(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var post = await _context.Posts
+                .Include(p => p.Group)
+                .Include(p => p.User)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            ApplicationUser user = UserHelper.GetCurrentUser(User.Identity.Name);
+
+            UserLike like = await _context.UserLikes.Where(ul => ul.PostId == id && ul.UserId == user.Id).FirstOrDefaultAsync();
+
+            if (like == null)
+            {
+                return NotFound();
+            }
+            
+            post.Likes--;
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(post);
+                _context.UserLikes.Remove(like);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", new { id = post.Id });
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(string id)
         {
@@ -67,7 +155,7 @@ namespace Koombu.Controllers
         }
 
         // POST: Posts/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -104,7 +192,7 @@ namespace Koombu.Controllers
         }
 
         // POST: Posts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]

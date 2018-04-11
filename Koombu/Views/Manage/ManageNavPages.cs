@@ -15,6 +15,8 @@ namespace Koombu.Views.Manage
 
         public static string Groups => "Groups";
 
+        public static string Timeline => "Timeline";
+
         public static string ChangePassword => "ChangePassword";
 
         public static string ExternalLogins => "ExternalLogins";
@@ -22,6 +24,8 @@ namespace Koombu.Views.Manage
         public static string TwoFactorAuthentication => "TwoFactorAuthentication";
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
+
+        public static string TimelineNavClass(ViewContext viewContext) => PageNavClass(viewContext, Timeline);
 
         public static string GroupsNavClass(ViewContext viewContext) => PageNavClass(viewContext, Groups);
 

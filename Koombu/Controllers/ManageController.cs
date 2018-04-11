@@ -75,6 +75,28 @@ namespace Koombu.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Timeline()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+
+            List<string> ids = await _context.UserGroups.Where(ug => ug.UserId == user.Id).Select(ugroup => ugroup.Group.Id).ToListAsync();
+
+            var model = await _context.Posts.Where(p => ids.Contains(p.GroupId)).ToListAsync();
+
+            List<string> userIds = await _context.UserFollows.Where(uf => uf.FollowerId == user.Id).Select(ufollow => ufollow.FollowingId).ToListAsync();
+
+            model.Concat( await _context.Posts.Where(p => userIds.Contains(p.GroupId)).ToListAsync());
+
+            return View(model.Distinct());
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(IndexViewModel model)
