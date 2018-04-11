@@ -32,6 +32,13 @@ namespace Koombu.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // GET: Posts/Search/string
+        public async Task<IActionResult> Search(string query)
+        {
+            List<Post> posts = await _context.Posts.Where(p => p.Content.Contains(query)).ToListAsync();
+            return View("Index", posts);
+        }
+
         // POST: like
         [HttpPost]
         [ValidateAntiForgeryToken]
