@@ -40,6 +40,20 @@
         </div>
     </nav>
     <div class="container body-content">
+        <div class="row">
+            <br />
+            <div class="col-md-12">
+                @if (TempData["errors"] != null)
+                {
+                    foreach (var error in TempData["errors"] as IEnumerable<string>)
+                    {
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> @error
+                        </div>
+                    }
+                }
+            </div>
+        </div>
         @RenderBody()
     </div>
     <footer>

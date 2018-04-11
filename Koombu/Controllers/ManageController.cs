@@ -205,7 +205,12 @@ namespace Koombu.Controllers
 
             if (await _context.UserFollows.Where(uf => uf.FollowingId == followUser.Id && uf.FollowerId == user.Id).FirstOrDefaultAsync() != null)
             {
-                return NotFound();
+                List<string> errors = new List<string>();
+                errors.Add("You already follow this user");
+
+                TempData.Add("errors", errors);
+
+                return RedirectToAction("Details", "Users", new { id = id });
             }
 
             UserFollow ufo = new UserFollow();
@@ -241,7 +246,12 @@ namespace Koombu.Controllers
             
             if (follow == null)
             {
-                return NotFound();
+                List<string> errors = new List<string>();
+                errors.Add("You are not following this user");
+
+                TempData.Add("errors", errors);
+
+                return RedirectToAction("Details", "Users", new { id = id });
             }
 
             if (ModelState.IsValid)

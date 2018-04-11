@@ -65,7 +65,12 @@ namespace Koombu.Controllers
 
             if (oldLike != null)
             {
-                return NotFound();
+                List<string> errors = new List<string>();
+                errors.Add("You have already liked this post");
+
+                TempData.Add("errors", errors);
+
+                return RedirectToAction("Details", new { id = id });
             }
 
             UserLike like = new UserLike();
@@ -111,7 +116,12 @@ namespace Koombu.Controllers
 
             if (like == null)
             {
-                return NotFound();
+                List<string> errors = new List<string>();
+                errors.Add("You are not liking this post");
+
+                TempData.Add("errors", errors);
+
+                return RedirectToAction("Details", new { id = id });
             }
             
             post.Likes--;
