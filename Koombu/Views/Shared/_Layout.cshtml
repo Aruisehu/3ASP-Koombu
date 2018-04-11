@@ -35,6 +35,16 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                 </ul>
+                <ul class="nav navbar-nav">
+                    <form asp-controller="Posts" asp-action="Search" method="get" class="nav navbar-nav">
+                        <input id="query" type="text" name="query" class="navbar-form nav" placeholder="Search for posts"/>
+                        <button type="submit" class="btn glyphicon glyphicon-search"></button>
+                    </form>
+                    <form asp-controller="Users" asp-action="Search" method="get" class="nav navbar-nav">
+                        <input id="query" type="text" name="query" class="navbar-form nav" placeholder="Search for users"/>
+                        <button type="submit" class="btn glyphicon glyphicon-search"></button>
+                    </form>
+                </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>

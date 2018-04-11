@@ -22,7 +22,16 @@ namespace Koombu.Controllers
         // GET: Users/Search
         public async Task<IActionResult> Search(string query)
         {
-            List<ApplicationUser> users = await _context.ApplicationUsers.Where(u => u.FullName.Contains(query)).ToListAsync();
+            List<ApplicationUser> users;
+            if (query != null)
+            {
+                users = await _context.ApplicationUsers.Where(u => u.FullName.Contains(query)).ToListAsync();
+
+            }
+            else
+            {
+                users = await _context.ApplicationUsers.ToListAsync();
+            }
             return View(users);
         }
 
