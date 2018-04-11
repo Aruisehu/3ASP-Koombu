@@ -35,7 +35,16 @@ namespace Koombu.Controllers
         // GET: Posts/Search/string
         public async Task<IActionResult> Search(string query)
         {
-            List<Post> posts = await _context.Posts.Where(p => p.Content.Contains(query)).ToListAsync();
+            List<Post> posts;
+            if (query != null)
+            {
+                posts = await _context.Posts.Where(p => p.Content.Contains(query)).ToListAsync();
+
+            }
+            else
+            {
+                posts = await _context.Posts.ToListAsync();
+            }
             return View("Index", posts);
         }
 
