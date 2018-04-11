@@ -17,6 +17,10 @@ namespace Koombu.Views.Manage
 
         public static string Timeline => "Timeline";
 
+        public static string MyFollower => "MyFollower";
+
+        public static string MyFollowing => "MyFollowing";
+
         public static string ChangePassword => "ChangePassword";
 
         public static string ExternalLogins => "ExternalLogins";
@@ -26,6 +30,10 @@ namespace Koombu.Views.Manage
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
         public static string TimelineNavClass(ViewContext viewContext) => PageNavClass(viewContext, Timeline);
+
+        public static string MyFollowerNavClass(ViewContext viewContext) => PageNavClass(viewContext, MyFollower);
+
+        public static string MyFollowingNavClass(ViewContext viewContext) => PageNavClass(viewContext, MyFollowing);
 
         public static string GroupsNavClass(ViewContext viewContext) => PageNavClass(viewContext, Groups);
 

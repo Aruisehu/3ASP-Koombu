@@ -25,5 +25,17 @@ namespace Koombu.Controllers
             List<ApplicationUser> users = await _context.ApplicationUsers.Where(u => u.FullName.Contains(query)).ToListAsync();
             return View(users);
         }
+
+        public async Task<IActionResult> Index()
+        {
+            List<ApplicationUser> users = await _context.ApplicationUsers.ToListAsync();
+            return View(users);
+        }
+
+        public async Task<IActionResult> Details(string id)
+        {
+            ApplicationUser user = await _context.ApplicationUsers.FindAsync(id);
+            return View(user);
+        }
     }
 }

@@ -9,6 +9,8 @@
     <hr />
     <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-action="Index">Profile</a></li>
     <li class="@ManageNavPages.TimelineNavClass(ViewContext)"><a asp-action="Timeline">Timeline</a></li>
+    <li class="@ManageNavPages.MyFollowerNavClass(ViewContext)"><a asp-action="MyFollower">Followers</a></li>
+    <li class="@ManageNavPages.MyFollowingNavClass(ViewContext)"><a asp-action="MyFollowing">Followings</a></li>
     <li class="@ManageNavPages.GroupsNavClass(ViewContext)"><a asp-action="Groups">My Groups</a></li>
     <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)"><a asp-action="ChangePassword">Password</a></li>
     @if (hasExternalLogins)

@@ -153,6 +153,107 @@ namespace Koombu.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        [HttpGet]
+        public async Task<IActionResult> MyFollower()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            List<ApplicationUser> model = await _context.UserFollows.Where(uf => uf.FollowingId == user.Id).Select(uf => uf.Follower).ToListAsync();
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyFollowing()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            List<ApplicationUser> model = await _context.UserFollows.Where(uf => uf.FollowerId == user.Id).Select(uf => uf.Following).ToListAsync();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Follow(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Details", "Users", new { id = id });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            ApplicationUser followUser = await _context.ApplicationUsers.FindAsync(id);
+
+            if (followUser == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{followUser.Id}'.");
+            }
+
+            if (await _context.UserFollows.Where(uf => uf.FollowingId == followUser.Id && uf.FollowerId == user.Id).FirstOrDefaultAsync() != null)
+            {
+                return NotFound();
+            }
+
+            UserFollow ufo = new UserFollow();
+            ufo.FollowerId = user.Id;
+            ufo.FollowingId = followUser.Id;
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(ufo);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", "Users", new { id = id });
+            }
+
+            return RedirectToAction("Details", "Users", new { id = id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unfollow(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Details", "Users", new { id = id });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            UserFollow follow = await _context.UserFollows.Where(uf => uf.FollowingId == id && uf.FollowerId == user.Id).FirstOrDefaultAsync();
+            
+            if (follow == null)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Remove(follow);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", "Users", new { id = id });
+            }
+
+            return RedirectToAction("Details", "Users", new { id = id });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendVerificationEmail(IndexViewModel model)

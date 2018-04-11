@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Koombu.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "My Followers";
+    ViewData.AddActivePage(ManageNavPages.MyFollower);
+}
+
+<h4>Followers</h4>
+<hr />
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>@Html.DisplayFor(modelItem => item.FullName)</h3>
+                    <a asp-action="Follow" asp-route-id="@item.Id" class="btn btn-default">Follow</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
