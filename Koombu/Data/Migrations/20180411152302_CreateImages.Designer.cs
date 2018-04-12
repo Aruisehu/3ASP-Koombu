@@ -11,9 +11,10 @@ using System;
 namespace Koombu.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180411152302_CreateImages")]
+    partial class CreateImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,22 +131,6 @@ namespace Koombu.Data.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("Koombu.Models.Image", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("PostId");
-
-                    b.Property<string>("Url");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Koombu.Models.Post", b =>
@@ -341,13 +326,6 @@ namespace Koombu.Data.Migrations
                     b.HasOne("Koombu.Models.ApplicationUser", "Owner")
                         .WithMany("OwnerGroups")
                         .HasForeignKey("OwnerId");
-                });
-
-            modelBuilder.Entity("Koombu.Models.Image", b =>
-                {
-                    b.HasOne("Koombu.Models.Post", "Post")
-                        .WithMany("Images")
-                        .HasForeignKey("PostId");
                 });
 
             modelBuilder.Entity("Koombu.Models.Post", b =>

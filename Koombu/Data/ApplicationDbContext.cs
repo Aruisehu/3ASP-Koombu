@@ -19,6 +19,7 @@ namespace Koombu.Data
         public DbSet<UserLike> UserLikes{ get; set; }
         public DbSet<Comment> Comments{ get; set; }
         public DbSet<Attachment> Attachments{ get; set; }
+        public DbSet<Image> Images{ get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -59,6 +60,9 @@ namespace Koombu.Data
 
             builder.Entity<Attachment>().ToTable("Attachments").HasKey(a => a.Id);
             builder.Entity<Attachment>().HasOne(a => a.Post).WithMany(p => p.Attachments);
+
+            builder.Entity<Image>().ToTable("Images").HasKey(i => i.Id);
+            builder.Entity<Image>().HasOne(i => i.Post).WithMany(p => p.Images);
 
             builder.Entity<UserFollow>().ToTable("UserFollows").HasKey(uf => new { uf.FollowingId, uf.FollowerId });
             builder.Entity<UserFollow>().HasOne(uf => uf.Following).WithMany(u => u.Followings);

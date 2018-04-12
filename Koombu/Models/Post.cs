@@ -17,6 +17,7 @@ namespace Koombu.Models
 
         public ICollection<Comment> Comments { get; } = new List<Comment>();
         public ICollection<Attachment> Attachments { get; } = new List<Attachment>();
+        public ICollection<Image> Images { get; } = new List<Image>();
         public ICollection<UserLike> UserLikes { get; } = new List<UserLike>();
     }
 }

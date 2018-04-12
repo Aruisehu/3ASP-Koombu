@@ -9,6 +9,7 @@ using Koombu.Data;
 using Koombu.Models;
 using Microsoft.AspNetCore.Authorization;
 using Koombu.Models.GroupViewModels;
+using Koombu.Helpers;
 
 namespace Koombu.Controllers
 {
@@ -20,6 +21,7 @@ namespace Koombu.Controllers
         public GroupsController(ApplicationDbContext context)
         {
             _context = context;
+            UserHelper.Context = _context;
         }
 
         // GET: Groups
@@ -53,7 +55,7 @@ namespace Koombu.Controllers
                 .Where(m => m.GroupId == id)
                 .ToListAsync();
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             DetailsViewModel model = new DetailsViewModel();
             model.Group = @group;
@@ -76,13 +78,19 @@ namespace Koombu.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Group @group)
         {
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             @group.OwnerId = user.Id;
 
             if (ModelState.IsValid)
             {
                 _context.Add(@group);
+                UserGroup join = new UserGroup
+                {
+                    Group = @group,
+                    UserId = user.Id
+                };
+                _context.Add(join);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -144,16 +152,18 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             if (@group.OwnerId != user.Id)
             {
                 return RedirectToAction("NotOwner");
             }
 
-            UserGroup join = new UserGroup();
-            join.GroupId = @group.Id;
-            join.UserId = @addedUser.Id;
+            UserGroup join = new UserGroup
+            {
+                GroupId = @group.Id,
+                UserId = @addedUser.Id
+            };
 
             if (ModelState.IsValid)
             {
@@ -181,7 +191,7 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             if (@group.OwnerId != user.Id)
             {
@@ -247,7 +257,7 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             UserGroup join = await _context.UserGroups.Where(ug => ug.UserId == user.Id && ug.GroupId == @group.Id).FirstOrDefaultAsync();
 
@@ -278,7 +288,7 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             UserGroup join = await _context.UserGroups.Where(ug => ug.UserId == user.Id && ug.GroupId == @group.Id).FirstOrDefaultAsync();
 
@@ -328,7 +338,7 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             if (@group.OwnerId != user.Id)
             {
@@ -375,7 +385,7 @@ namespace Koombu.Controllers
                 return NotFound();
             }
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             if (@group.OwnerId != user.Id)
             {
@@ -392,7 +402,7 @@ namespace Koombu.Controllers
         {
             var @group = await _context.Groups.SingleOrDefaultAsync(m => m.Id == id);
 
-            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var user = UserHelper.GetCurrentUser(User.Identity.Name);
 
             if (@group.OwnerId != user.Id)
             {

@@ -9,5 +9,7 @@ namespace Koombu.Models.PostViewModels
     {
         public Post Post { get; set; }
         public Comment Comment { get; set; }
+        public Attachment Attachment { get; set; }
+        public Image Image { get; set; }
     }
 }

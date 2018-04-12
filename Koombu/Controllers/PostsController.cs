@@ -38,12 +38,12 @@ namespace Koombu.Controllers
             List<Post> posts;
             if (query != null)
             {
-                posts = await _context.Posts.Where(p => p.Content.Contains(query)).ToListAsync();
+                posts = await _context.Posts.Where(p => p.Content.Contains(query)).Include(p => p.Group).Include(p => p.User).ToListAsync();
 
             }
             else
             {
-                posts = await _context.Posts.ToListAsync();
+                posts = await _context.Posts.Include(p => p.Group).Include(p => p.User).ToListAsync();
             }
             return View("Index", posts);
         }
@@ -61,6 +61,9 @@ namespace Koombu.Controllers
             var post = await _context.Posts
                 .Include(p => p.Group)
                 .Include(p => p.User)
+                .Include(p => p.Comments)
+                .Include(p => p.Attachments)
+                .Include(p => p.Images)
                 .SingleOrDefaultAsync(m => m.Id == id);
 
             if (post == null)
@@ -79,12 +82,14 @@ namespace Koombu.Controllers
 
                 TempData.Add("errors", errors);
 
-                return RedirectToAction("Details", new { id = id });
+                return RedirectToAction("Details", new { id });
             }
 
-            UserLike like = new UserLike();
-            like.UserId = user.Id;
-            like.PostId = post.Id;
+            UserLike like = new UserLike
+            {
+                UserId = user.Id,
+                PostId = post.Id
+            };
 
             post.Likes++;
 
@@ -112,6 +117,9 @@ namespace Koombu.Controllers
             var post = await _context.Posts
                 .Include(p => p.Group)
                 .Include(p => p.User)
+                .Include(p => p.Comments)
+                .Include(p => p.Attachments)
+                .Include(p => p.Images)
                 .SingleOrDefaultAsync(m => m.Id == id);
 
             if (post == null)
@@ -130,7 +138,7 @@ namespace Koombu.Controllers
 
                 TempData.Add("errors", errors);
 
-                return RedirectToAction("Details", new { id = id });
+                return RedirectToAction("Details", new { id });
             }
             
             post.Likes--;
@@ -158,11 +166,15 @@ namespace Koombu.Controllers
                 .Include(p => p.Group)
                 .Include(p => p.User)
                 .Include(p => p.Comments)
+                .Include(p => p.Attachments)
+                .Include(p => p.Images)
                 .SingleOrDefaultAsync(m => m.Id == id);
             DetailsViewModel model = new DetailsViewModel
             {
                 Post = post,
-                Comment = new Comment()
+                Comment = new Comment(),
+                Attachment = new Attachment(),
+                Image = new Image()
             };
             if (post == null)
             {

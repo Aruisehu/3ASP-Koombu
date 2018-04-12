@@ -49,10 +49,83 @@
     <a class="btn btn-default" asp-action="Edit" asp-route-id="@Model.Post.Id">Edit</a>
     <a class="btn btn-default" asp-action="Index">Back to List</a>
 </div>
+<div class="row">
+    @foreach (Attachment a in Model.Post.Attachments)
+    {
+        <div class="col-lg-6">
+            <div class="panel-body">
+                <a href="@a.Url">@a.Url</a>
+            </div>
+            @if (Model.Post.User.Email == User.Identity.Name)
+            {
+                <form asp-action="Delete" asp-controller="Attachments" asp-route-postId="@Model.Post.Id" asp-route-id="@a.Id">
+                    <div class="form-group">
+                        <input type="submit" value="Delete Attachment" class="btn btn-sm btn-danger" />
+                    </div>
+                </form>
+            }
+        </div>
+    }
+
+    @foreach (Image i in Model.Post.Images)
+    {
+        <div class="col-lg-6">
+            <img src="@i.Url"/>
+            @if (Model.Post.User.Email == User.Identity.Name)
+            {
+                <form asp-action="Delete" asp-controller="Images" asp-route-postId="@Model.Post.Id" asp-route-id="@i.Id">
+                    <div class="form-group">
+                        <input type="submit" value="Delete Image" class="btn btn-sm btn-danger"/>
+                    </div>
+                </form>
+            }
+        </div>
+    }
+</div>
+<div class="row">
+@if (Model.Post.User.Email == User.Identity.Name)
+{
+
+    <div class="col-lg-6">
+        <h3> Add an Attachment</h3>
+        <form asp-action="Create" asp-controller="Attachments" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Attachment.Url" class="control-label"></label>
+                <input asp-for="@Model.Attachment.Url" class="form-control"/>
+                <span asp-validation-for="@Model.Attachment.Url" class="text-danger"></span>
+            </div>
+            <div class="hidden">
+                @Html.EditorFor(m => m.Post)
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add an Attachment" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-6">
+        <h3> Add an Image</h3>
+        <form asp-action="Create" asp-controller="Images" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Image.Url" class="control-label"></label>
+                <input asp-for="@Model.Image.Url" class="form-control"/>
+                <span asp-validation-for="@Model.Image.Url" class="text-danger"></span>
+            </div>
+            <div class="hidden">
+                @Html.EditorFor(m => m.Post)
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add an Image" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+}
+</div>
 
 <h2> Comments </h2>
 <div>
-    <form asp-action="Create" asp-controller="Comments" asp-route-postId="@Model.Post.Id">
+    <form asp-action="Create" asp-controller="Comments">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="@Model.Comment.Content" class="control-label"></label>
@@ -66,21 +139,23 @@
             <input type="submit" value="Comment" class="btn btn-default" />
         </div>
     </form>
-    @foreach(Comment c in Model.Post.Comments)
+    @foreach (Comment c in Model.Post.Comments)
     {
         <div>
-            <h4>@c.User.FullName</h4>
-            <div class="panel-body">
-                @c.Content
+            <div class="media media-body">
+                <div class="media-left">
+                    <h4>@c.User.FullName</h4>
+                        @c.Content
+                    @if (c.User.Email == User.Identity.Name)
+                    {
+                        <form asp-action="Delete" asp-controller="Comments" asp-route-postId="@Model.Post.Id" asp-route-id="@c.Id">
+                            <div class="form-group">
+                                <input type="submit" value="Delete Comment" class="btn btn-sm btn-danger" />
+                            </div>
+                        </form>
+                    }
+                </div>
             </div>
-            @if (c.User.Email == User.Identity.Name)
-            {
-                <form asp-action="Delete" asp-controller="Comments" asp-route-postId="@Model.Post.Id" asp-route-id="@c.Id">
-                    <div class="form-group">
-                        <input type="submit" value="Delete Comment" class="btn-link" />
-                    </div>
-                </form>
-            }
         </div>
     }
 </div>

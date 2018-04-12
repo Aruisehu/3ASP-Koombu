@@ -27,11 +27,11 @@
             </button>
             <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="/images/logo.png"/></a>
         </div>
-        <div class="navbar-collapse collapse">
+        <div class="navbar-collapse collapse" style="margin-right: 10px">
             <ul class="nav navbar-nav">
                 <li><a asp-area="" asp-controller="Groups" asp-action="Index">Groups</a></li>
-                <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+                <li><a asp-area="" asp-controller="Posts" asp-action="Index">Posts</a></li>
             </ul>
             <div class="col-sm-2 col-md-2">
                 <form asp-controller="Posts" asp-action="Search" method="get" class="navbar-form" role="search">
