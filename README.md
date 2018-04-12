@@ -13,7 +13,7 @@ Projet de 3ASP 2017-2018 pour Supinfo réalisé par Yohann Jolain et Sébastien 
 - Lancer le projet sur IIS
 
 ## Web API
-L'API suit les convention REST
+L'API suit les conventions REST
 
 Endpoints:
 - api/Users
