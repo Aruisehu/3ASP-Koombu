@@ -8,6 +8,9 @@
 <h4>Timeline</h4>
 <hr />
 <div class="row">
+    <div class="col-sm-12">
+        <p>All the posts from the groups you are a part of and from your followings will appear here.</p>
+    </div>
     @foreach (var item in Model)
     {
 
@@ -18,7 +21,6 @@
 
                     <a asp-controller="Posts" asp-action="Details" asp-route-id="@item.Id" class="card-link">Voir tout</a>
                 </div>
-                <div class="panel-footer"><small>Group: @Html.DisplayFor(modelItem => item.Group.Name)</small></div>
             </div>
         </div>
     }
